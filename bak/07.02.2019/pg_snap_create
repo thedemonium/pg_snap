@@ -82,22 +82,12 @@ done
 function print_dates()
 {
 printf "\nList of available database snapshot dates:\n";
-zfs list -t snap  | grep z5z2ssd/pgReplica/pg96-gifts-replica-L4 | grep 'hour\|dai'| awk '{print $1}' | sort  | cut -d @ -f 2;
+zfs list -t snap  | grep z5z2ssd/pgReplica/pg96-gifts-replica-L4 | awk '{print $1}' | sort  | cut -d @ -f 2;
 printf "\n";
 printf "List already used PG snapshots:\n"
 #lxc list --fast | grep RUNNING | grep u16pg-replica-h | awk -F '[|.]' '{print $2}' | cut -c16-
-#lxc list --fast | grep RUNNING | grep u16pg-replica- | awk -F '[|.]' '{print $2}' | grep 'hour\|dai'  | cut -c16-
-usedsnaps=`lxc list --fast | grep RUNNING | grep u16pg-replica- | awk -F '[|.]' '{print $2}' | grep 'hour\|dai' | cut -c16-`
-usedips=`lxc list | grep RUNNING | grep 'hour\|dai' | grep u16pg-replica- | awk -F '[|]' '{print $4}' | cut -c2-14`
-
-usedsnaps=(${usedsnaps// / })
-usedips=(${usedips// / })
-
-for ((i=0; i<=${#usedsnaps[@]}; i++)); do
-    printf '%s %s\n' "${usedsnaps[i]}" "${usedips[i]}"
-done
-
-#printf "\n";
+lxc list --fast | grep RUNNING | grep u16pg-replica- | awk -F '[|.]' '{print $2}' | grep 'hour\|day'  | cut -c16-
+printf "\n";
 printf "Usage: $0 {hourly\daily}-{DATE} {IP}\n";
 printf "Example: $0 hourly-2019-01-11-15-00 192.168.2.53\n";
 }

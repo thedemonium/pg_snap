@@ -8,22 +8,11 @@ function list_used_dates()
 {
 printf "List already used PG snapshots:\n"
 #lxc list --fast | grep RUNNING | grep u16pg-replica-h | awk -F '[|.]' '{print $2}' | cut -c16-
-usedsnaps=`lxc list --fast | grep RUNNING | grep u16pg-replica- | awk -F '[|.]' '{print $2}' | grep 'hour\|day' | cut -c16-`
-usedips=`lxc list | grep RUNNING | grep 'hour\|day' | grep u16pg-replica- | awk -F '[|]' '{print $4}' | cut -c2-14`
-
-usedsnaps=(${usedsnaps// / })
-usedips=(${usedips// / })
-
-for ((i=0; i<=${#usedsnaps[@]}; i++)); do
-    printf '%s %s\n' "${usedsnaps[i]}" "${usedips[i]}"
-done
-#printf "\n";
+lxc list --fast | grep RUNNING | grep u16pg-replica- | awk -F '[|.]' '{print $2}' | grep 2019 | cut -c16-
+printf "\n";
 printf "Usage: $0 {hourly\daily}-{DATE}\n";
 printf "Example: $0 hourly-2019-01-11-15-00\n";
 }
-
-
-
 
 # remove_replica function
 function remove_replica()
