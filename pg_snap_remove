@@ -1,0 +1,40 @@
+#!/bin/bash
+
+# read date
+snapdate=$1
+
+# list used dates
+function list_used_dates()
+{
+printf "List already used PG snapshots:\n"
+#lxc list --fast | grep RUNNING | grep u16pg-replica-h | awk -F '[|.]' '{print $2}' | cut -c16-
+lxc list --fast | grep RUNNING | grep u16pg-replica- | awk -F '[|.]' '{print $2}' | grep 'hour\|day' | cut -c16-
+printf "\n";
+printf "Usage: $0 {hourly\daily}-{DATE}\n";
+printf "Example: $0 hourly-2019-01-11-15-00\n";
+}
+
+# remove_replica function
+function remove_replica()
+{
+## stop container
+printf "\nStop container [1/3]\n"
+lxc stop u16pg-replica-$snapdate
+
+## remove mount snapshot ## 
+printf "\nRemove PG snapshot [2/3]\n"
+zfs destroy z5z2ssd/pgReplica/$snapdate
+
+## remove container ##
+printf "\nRemove container [3/3]\n"
+lxc delete u16pg-replica-$snapdate
+}
+
+###############################################################################################
+# default action
+[ $# -eq 0 ] && {
+list_used_dates;
+exit 1;
+}
+remove_replica;
+
